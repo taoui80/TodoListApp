@@ -1,14 +1,27 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using TodoListApp;
+using TodoListApp.Data;
+using TodoListApp.Models;
+//using TodoListApp.Services;
+//using ProjectService = TodoListApp.Services.ProjectService;
 
 var builder = WebApplication.CreateBuilder(args);
 var sitePolicy = "_site-policy";
-// Add services to the container.
-// Middleware
+// Add services to the container. // Middleware
+
 builder.Services.AddDbContext<TodoListContext>(options => 
-    options.UseSqlite("DataSource=todoList.db"));
-builder.Services.AddControllers();
+
+	options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+	);
+    
+//builder.Services.AddScoped<IProjectService, ProjectService>();
+//builder.Services.AddScoped<ITaskItemService, TaskItemService>();
+
+builder.Services.AddControllers()
+	.AddJsonOptions(options => 
+	{
+		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+	});
     
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -22,9 +35,8 @@ builder.Services.AddCors(options =>
 			.AllowAnyMethod();
 	});
 });
-
-
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

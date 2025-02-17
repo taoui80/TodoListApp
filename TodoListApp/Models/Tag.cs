@@ -1,16 +1,17 @@
-using System;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace TodoListApp.Models;
-
-public class Tag
+namespace TodoListApp.Models
 {
-    public int Id { get; set;}
-    public string? TagName { get; set;}
-
-    public Tag() {}
-    public Tag(int id, string tagName)
+    public class Tag
     {
-        Id = id;
-        TagName = tagName; 
+        [Key]
+        public int TagId { get; set; }
+        
+        [Required]
+        public string TagName { get; set; } = string.Empty; // "Home","Work", "Shop"
+        public List<Project> Projects { get; set; } = new();
     }
+
 }
+
